@@ -1,0 +1,21 @@
+{
+  "name": "E-commerce-shared",
+  "author": "Sage Baram",
+  "description": "E-commerce shared utilities",
+  "license": "ISC",
+  "version": "0.0.0",
+  "main": "index.js",
+  "keywords": [
+    "shared",
+    "utilities"
+  ],
+  "homepage": "https://github.com/SageBaram/e-commerce/shared#readme",
+  "scripts": {
+    "build": "babel src --out-dir dist",
+    "watch": "babel src --out-dir dist --watch"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.22.15",
+    "@babel/preset-env": "^7.22.20"
+  }
+}
