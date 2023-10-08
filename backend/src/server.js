@@ -2,6 +2,7 @@
 require("module-alias/register");
 
 const express = require("express");
+const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const _ = require("lodash");
@@ -12,12 +13,12 @@ const Logger = require("@shared/utils/Logger").default;
 const { errorHandlerMiddleware } = require("./middlewares/errorMiddleware");
 const { loggerMiddleware } = require("./middlewares/loggerMiddleware");
 const corsOptions = require("./config/corsOptions");
+const config = require("./config/config");
 
 /** Routes */
 const healthRoutes = require("./routes/healthRoutes");
 
 const app = express();
-const PORT = 3001;
 
 app.locals._ = _;
 
@@ -26,6 +27,23 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("/public"));
 app.use(cors(corsOptions));
+
+/* only if mongoose connection works, start the server */
+const connectToMongoDB = async () => {
+	try {
+		await mongoose.connect(config.mongoURI, {
+			useNewUrlParser: true,
+			useUnifiedTopology: true,
+			retryWrites: true,
+			w: "majority",
+		});
+		Logger.info("Connected successfully to MongoDB!\n");
+		startServer();
+	} catch (error) {
+		Logger.error(`Error while connecting to MongoDB ${error}`);
+		Logger.error(error.stack);
+	}
+};
 
 const startServer = () => {
 	/** Middlewares */
@@ -48,8 +66,7 @@ const startServer = () => {
 		});
 	}
 
-	app.listen(PORT, () => Logger.info(`Server is running on port ${PORT}`));
+	app.listen(config.port, () => Logger.info(`Server is running on port ${config.port}`));
 };
 
-// TODO: Call it inside the db connection.
-startServer();
+connectToMongoDB();
