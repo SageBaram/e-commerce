@@ -1,5 +1,5 @@
 const Logger = require("@shared/utils/Logger").default;
-const responseHandlers = require("../utils/responseHandlers");
+const responseHandlers = require("./responseHandlers");
 
 class ErrorHandler {
 	static async handle(err, req, res, next) {
