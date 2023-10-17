@@ -1,72 +1,73 @@
 // NOTE: Look at package.json for aliases.
 require("module-alias/register");
 
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const helmet = require("helmet");
-const _ = require("lodash");
+const app = require("@app/app");
 
+/** Services */
 const Logger = require("@shared/utils/Logger").default;
+const { connectDB, closeDB } = require("@services/database");
 
 /** Middlewares */
-const { errorHandlerMiddleware } = require("./middlewares/errorMiddleware");
-const { loggerMiddleware } = require("./middlewares/loggerMiddleware");
-const corsOptions = require("./config/corsOptions");
-const config = require("./config/config");
+const { loggerMiddleware } = require("@middlewares/loggerMiddleware");
+
+/** Configurations */
+const config = require("@config/config");
 
 /** Routes */
-const healthRoutes = require("./routes/healthRoutes");
+const healthRoutes = require("@routes/healthRoutes");
+const productRoutes = require("@routes/productRoutes");
 
-const app = express();
+async function startServer() {
+  let server;
 
-app.locals._ = _;
+  try {
+    // Connect to database
+    await connectDB();
 
-app.use(helmet());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.static("/public"));
-app.use(cors(corsOptions));
+    if (process.env.NODE_ENV === "development") {
+      /** Development Middlewares */
+      app.use(loggerMiddleware);
+      /** Development Routes */
+      app.use("/api/health", healthRoutes);
+    }
 
-/* only if mongoose connection works, start the server */
-const connectToMongoDB = async () => {
-	try {
-		await mongoose.connect(config.mongoURI, {
-			useNewUrlParser: true,
-			useUnifiedTopology: true,
-			retryWrites: true,
-			w: "majority",
-		});
-		Logger.info("Connected successfully to MongoDB!\n");
-		startServer();
-	} catch (error) {
-		Logger.error(`Error while connecting to MongoDB ${error}`);
-		Logger.error(error.stack);
-	}
-};
+    /** Middlewares */
 
-const startServer = () => {
-	/** Middlewares */
-	app.use(errorHandlerMiddleware);
+    /** Routes */
+    app.use("/api/products", productRoutes);
 
-	if (process.env.NODE_ENV === "development") {
-		/** Middlewares */
-		app.use(loggerMiddleware);
-		/** Routes */
-		app.use("/health", healthRoutes);
-	}
+    /** Graceful shutdown */
+    if (process.env.NODE_ENV === "production") {
+      server = app.listen(config.port, () =>
+        Logger.info(`Server is running on port ${config.port}`),
+      );
+      process.on("SIGTERM", () => {
+        Logger.warn("SIGTERM signal received: closing HTTP server");
 
-	/** Graceful shutdown */
-	if (process.env.NODE_ENV === "production") {
-		process.on("SIGTERM", () => {
-			Logger.warn("SIGTERM signal received: closing HTTP server");
-			server.close(() => {
-				Logger.warn("HTTP server closed");
-			});
-		});
-	}
+        server.close(() => {
+          Logger.warn("HTTP server closed");
+          closeDB(); // Close the MongoDB Connection
+          Logger.info("MongoDB connection closed.\n");
+        });
+      });
+    } else {
+      // In non-production environments, just start the server without graceful shutdown
+      if (process.env.NODE_ENV !== "test") {
+        server = app.listen(config.port, () => {
+          Logger.info(`Server is running on port ${config.port}`);
+        });
+      }
+    }
 
-	app.listen(config.port, () => Logger.info(`Server is running on port ${config.port}`));
-};
+    return app;
+  } catch (error) {
+    Logger.error(`Failed to start server due to DB connection error: ${error}`);
+    throw error;
+  }
+}
 
-connectToMongoDB();
+if (process.env.NODE_ENV !== "test") {
+  startServer();
+}
+
+module.exports = startServer;
