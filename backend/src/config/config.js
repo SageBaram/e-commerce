@@ -1,5 +1,6 @@
 const dotenv = require("dotenv");
-dotenv.config({ path: "@root/.env" });
+const path = require("path");
+dotenv.config({ path: path.resolve(__dirname, "../../../.env") });
 
 /** MongoDB URI setup */
 const MONGO_USERNAME = process.env.MONGO_USERNAME || "";
