@@ -15,16 +15,10 @@ const config = {
   coverageDirectory: "coverage",
 
   // An array of regexp pattern strings used to skip coverage collection
-  coveragePathIgnorePatterns: [
-    "/node_modules/"
-  ],
+  coveragePathIgnorePatterns: ["/node_modules/"],
 
   // An array of file extensions your modules use
-  moduleFileExtensions: [
-    "js",
-    "json",
-    "node"
-  ],
+  moduleFileExtensions: ["js", "json", "node"],
 
   // A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
   moduleNameMapper: {
@@ -44,8 +38,6 @@ const config = {
 
   // The test environment that will be used for testing
   testEnvironment: "node",
-
-
 };
 
 module.exports = config;
