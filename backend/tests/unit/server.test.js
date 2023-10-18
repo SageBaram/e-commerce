@@ -72,7 +72,7 @@ describe("Run the server", () => {
 	});
 });
 
-describe("Start server in production", () => {
+describe("Start server in production and resolve SIGTERM", () => {
 	let originNodeEnv;
 	let mockClose;
 	let mockListen;
