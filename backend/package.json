@@ -12,7 +12,7 @@
 	"scripts": {
 		"dev": "NODE_ENV=development nodemon src/server.js",
 		"start": "NODE_ENV=production node src/server.js",
-		"test": "jest --onlyChanged --detectOpenHandles"
+		"test": "NODE_ENV=test jest --onlyChanged --detectOpenHandles"
 	},
 	"devDependencies": {
 		"dotenv": "^16.3.1",
