@@ -51,9 +51,7 @@ describe("Product Controller", () => {
 			countInStock: 10,
 		};
 
-		const res = await request(app)
-			.post("/api/products/create")
-			.send(newProduct);
+		const res = await request(app).post("/api/products/").send(newProduct);
 
 		expect(res.statusCode).toEqual(201);
 		expect(res.body).toHaveProperty("product");
@@ -66,7 +64,7 @@ describe("Product Controller", () => {
 		// Mock the behaviour of the Product.find method
 		findMock.mockResolvedValue([mockProduct]);
 
-		const res = await request(app).get("/api/products/get/");
+		const res = await request(app).get("/api/products/");
 		expect(res.statusCode).toEqual(200);
 		expect(res.body).toHaveProperty("products");
 		expect(Array.isArray(res.body.products)).toBeTruthy();
@@ -79,7 +77,7 @@ describe("Product Controller", () => {
 		findByIdMock.mockResolvedValue(new Product(mockProduct));
 
 		const productId = "Sample Id";
-		const res = await request(app).get(`/api/products/get/${productId}`);
+		const res = await request(app).get(`/api/products/${productId}`);
 
 		if (res.statusCode === 200) {
 			expect(res.body).toHaveProperty("product");
@@ -100,7 +98,7 @@ describe("Product Controller", () => {
 		saveMock.mockResolvedValue(mockProduct);
 
 		const res = await request(app)
-			.patch(`/api/products/update/${productId}`)
+			.patch(`/api/products/${productId}`)
 			.send(updateData);
 
 		expect(res.statusCode).toEqual(200);
@@ -110,12 +108,11 @@ describe("Product Controller", () => {
 		expect(saveMock).toHaveBeenCalled();
 	});
 
-
 	it("should delete a product by ID", async () => {
 		const productId = "Sample Id";
 
 		findOneAndDeleteMock.mockResolvedValue(mockProduct);
-		const res = await request(app).delete(`/api/products/delete/${productId}`);
+		const res = await request(app).delete(`/api/products/${productId}`);
 
 		if (res.statusCode === 201) {
 			expect(res.body).toHaveProperty(
@@ -135,7 +132,7 @@ describe("Product Controller", () => {
 
 		findByIdMock.mockResolvedValue(null);
 
-		const res = await request(app).patch(`/api/products/update/${productId}`);
+		const res = await request(app).patch(`/api/products/${productId}`);
 
 		expect(res.statusCode).toEqual(404);
 		expect(res.body).toHaveProperty("message", "Product not found");
@@ -152,7 +149,7 @@ describe("Product Controller", () => {
 		);
 
 		const res = await request(app)
-			.patch(`/api/products/update/${productId}`)
+			.patch(`/api/products/${productId}`)
 			.send(updateData);
 
 		expect(res.statusCode).toEqual(500);
@@ -171,7 +168,7 @@ describe("Product Controller", () => {
 		);
 
 		const res = await request(app)
-			.patch(`/api/products/update/${productId}`)
+			.patch(`/api/products/${productId}`)
 			.send(updateData);
 
 		expect(res.statusCode).toEqual(500);
