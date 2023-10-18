@@ -4,7 +4,7 @@ const helmet = require("helmet");
 const _ = require("lodash");
 
 const corsOptions = require("@config/corsOptions");
-const errorHandlerMiddleware = require("@middlewares/errorMiddleware");
+const errorMiddleware = require("@middlewares/errorMiddleware");
 
 const app = express();
 
@@ -15,6 +15,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("/public"));
 app.use(cors(corsOptions));
-app.use(cors(errorHandlerMiddleware));
+app.use(errorMiddleware);
 
 module.exports = app;
