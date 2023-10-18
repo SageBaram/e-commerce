@@ -2,30 +2,30 @@ const mongoose = require("mongoose");
 const Product = require("@models/productModel");
 
 // GET CONTROLLERS
-const readProduct = async (req, res) => {
+const readProduct = async (req, res, next) => {
 	const productId = req.params.productId;
 
 	try {
 		const product = await Product.findById(productId);
-		return product
-			? res.status(200).json({ product })
-			: res.status(404).json({ message: "Product not found" });
+		if (product) {
+			return res.status(200).json({ product });
+		} else next({ statusCode: 404, message: "Product not found" });
 	} catch (error) {
-		return res.status(500).json({ error });
+		next(error);
 	}
 };
 
-const readAllProducts = async (_, res) => {
+const readAllProducts = async (_, res, next) => {
 	try {
 		const products = await Product.find({});
 		return res.status(200).json({ products });
 	} catch (error) {
-		return res.status(500).json({ error });
+		next(error);
 	}
 };
 
 // POST CONTROLLERS
-const createProduct = async (req, res) => {
+const createProduct = async (req, res, next) => {
 	const { name, brand, category, description, image, price, countInStock } =
 		req.body;
 
@@ -44,49 +44,38 @@ const createProduct = async (req, res) => {
 		await product.save();
 		return res.status(201).json({ product });
 	} catch (error) {
-		console.error(error);
-		return res.status(500).json({ message: "An error occurred" });
+		console.log("Controller method catch block called");
+		next(error);
 	}
 };
 
 // PATCH CONTROLLERS
-const updateProduct = async (req, res) => {
-  const productId = req.params.productId;
-  try {
-    // Finding the product by id
-    const product = await Product.findById(productId);
-    if (product) {
-      try {
-        // Update the product with the request body data
-        product.set(req.body);
-        await product.save();
-        // Respond with a success status and the updated product
-        return res.status(200).json({ product });
-      } catch (error) {
-        // Handle save error
-        res.status(500).json({ error: "Error updating the product" });
-      }
-    } else {
-      // Product not found
-      res.status(404).json({ message: "Product not found" });
-    }
-  } catch (error) {
-    // Handle find error
-    res.status(500).json({ error: "Internal server error" });
-  }
+const updateProduct = async (req, res, next) => {
+	const productId = req.params.productId;
+	try {
+		const product = await Product.findById(productId);
+		if (!product) {
+			next({ statusCode: 404, message: "Product not found" });
+		}
+		product.set(req.body);
+		await product.save();
+		return res.status(200).json({ product });
+	} catch (error) {
+		next(error);
+	}
 };
 
 // DELETE CONTROLLERS
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res, next) => {
 	const productId = req.params.productId;
 
 	try {
 		await Product.findByIdAndDelete(productId);
-		return res.status(201).json({
+		return res.status(200).json({
 			message: `${productId} Deleted from database!`,
 		});
 	} catch (error) {
-		return res.status(500).json({ message: "Product not found" });
+		next({ statusCode: 404, message: "Product not found" });
 	}
 };
 
