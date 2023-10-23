@@ -1,0 +1,39 @@
+.categoryItem {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.categoryItem figcaption {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  top: 7rem;
+}
+
+.categoryItem h2 {
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.categoryItemImage {
+  position: absolute;
+  bottom: 5rem;
+	right: 4rem;
+  height: 12.5rem;
+  width: 14rem;
+  z-index: 1;
+}
+.shop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  gap: 0.5rem;
+}
+
+.shop span {
+  color: grey;
+  font-size: 12px;
+}

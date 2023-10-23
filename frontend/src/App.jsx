@@ -1,15 +1,26 @@
 import { Suspense } from "react";
-import ErrorBoundary from "./components/utils/ErrorBoundary";
+import { ThemeProvider } from "./contexts/ThemeContext.jsx";
+import { Route, Routes } from "react-router-dom";
+import ErrorBoundary from "./components/utils/ErrorBoundary.jsx";
+import Home from "./layouts/Home.jsx";
 
 const App = () => {
 	return (
-		<ErrorBoundary>
-			<Suspense fallback={<div>Loading...</div>}>
-				<div className="App">
-					<h1>Hello World</h1>
-				</div>
-			</Suspense>
-		</ErrorBoundary>
+		<ThemeProvider>
+			<ErrorBoundary>
+				<Suspense fallback={<div>Loading...</div>}>
+					<div className="App">
+						<Routes>
+							<Route path="/" element={<Home />} />
+							<Route path="/headphones" element={<div>Headphones</div>} />
+							<Route path="/speakers" element={<div>Speakers</div>} />
+							<Route path="/earphones" element={<div>Earphones</div>} />
+							<Route path="/cart" element={<div>Cart</div>} />
+						</Routes>
+					</div>
+				</Suspense>
+			</ErrorBoundary>
+		</ThemeProvider>
 	);
 };
 

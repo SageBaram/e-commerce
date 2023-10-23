@@ -1,0 +1,26 @@
+.categories {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.container {
+  width: 100vw;
+  height: 100%;
+  background-color: inherit;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  place-items: center;
+  padding: 0 2rem;
+}
+
+.wrapper {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  background-color: whitesmoke;
+  width: 350px;
+  height: 200px;
+  border-radius: 5px;
+}

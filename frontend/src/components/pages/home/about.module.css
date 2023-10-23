@@ -1,0 +1,36 @@
+.container {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	padding: 0 4rem;
+}
+
+.contentContainer {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
+
+.contentContainer header {
+	font-size: 2rem;
+	font-weight: 500;
+	line-height: 1;
+	padding-bottom: 20px;
+}
+
+.contentContainer p {
+	width: 95%;
+}
+
+.contentContainer span {
+	color: var(--clr-primary);
+}
+
+/* .imageContainer { */
+/* 	padding: 5rem 5rem; */
+/* } */
+
+/* .imageContainer > img { */
+/* 	object-fit: cover; */
+/* 	border-radius: 10px; */
+/* 	height: 100%; */
+/* } */
